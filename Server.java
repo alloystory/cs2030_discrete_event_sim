@@ -1,87 +1,171 @@
 package cs2030.simulator;
 
-import java.util.Deque;
+import java.util.Queue;
 import java.util.LinkedList;
 
-public class Server {
-    protected int id;
-    protected Event currentEvent;
-    protected Deque<Event> futureEvents;
-    protected boolean isResting;
+final class Server {
+    private int id;
+    private ServerType serverType;
+    private Event currentEvent;
+    private Queue<Event> futureEvents;
+    private boolean isResting;
 
-    public static int MAXIMUM_QUEUE_LENGTH;
+    static int MAXIMUM_QUEUE_LENGTH = 0;
 
-    public Server(int id) {
+    /**
+     * List of Valid Server Types.
+     */
+    enum ServerType {
+        HUMAN_SERVER(1),
+        SELF_CHECKOUT(2);
+
+        private final int serverType;
+        ServerType(int serverType) {
+            this.serverType = serverType;
+        }
+    }
+    
+    /**
+     * Constructs a new Server.
+     * @param id the id of the Server
+     * @param serverType the type of the Server
+     */
+    Server(int id, ServerType serverType) {
         this.id = id;
+        this.serverType = serverType;
         this.currentEvent = null;
         this.futureEvents = new LinkedList<>();
         this.isResting = false;
     }
 
-    public int getID() {
-        return this.id;
+    /**
+     * Returns the id of the server.
+     * @return the id of the server.
+     */
+    int getID() {
+        return id;
     }
 
-    public Event getCurrentEvent() {
+    /**
+     * Returns the type of the server.
+     * @return the type of the server.
+     */
+    ServerType getType() {
+        return serverType;
+    }
+
+    /**
+     * Returns the current serving event.
+     * @return the current serving event.
+     */
+    Event getCurrentEvent() {
         return currentEvent;
     }
 
-    public void setCurrentEvent(Event event) {
+    /**
+     * Changes the current event.
+     * @param event the event to change to
+     */
+    void setCurrentEvent(Event event) {
         currentEvent = event;
     }
 
-    public void addFutureEvent(Event event) {
-        this.futureEvents.offer(event);
-    }
-
-    public void addFirstFutureEvent(Event event) {
-        this.futureEvents.offerFirst(event);
-    }
-
-    public Event deleteCurrentEvent() {
+    /**
+     * Deletes and returns the current serving event.
+     * @return the current serving event.
+     */
+    Event deleteCurrentEvent() {
         Event output = currentEvent;
         currentEvent = null;
         return output;
     }
 
-    public Event pollFutureEvent() {
+    /**
+     * Add an event into the server's future events.
+     * @param event the event to be added
+     */
+    void addFutureEvent(Event event) {
+        this.futureEvents.offer(event);
+    }
+
+    /**
+     * Removes and returns the first added future event.
+     * @return the first added future event
+     */
+    Event pollFutureEvent() {
         return futureEvents.poll();
     }
 
-    public boolean isBusy() {
+    /**
+     * Returns true if the server is currently serving someone.
+     * @return true if the server is currently serving someone.
+     */
+    boolean isServing() {
         return currentEvent != null;
     }
 
-    public boolean hasWaitingEvents() {
-        return futureEvents.size() != 0;
-    }
-
-    public int getQueueLength() {
-        return futureEvents.size();
-    }
-
-    public boolean isFull() {
+    /**
+     * Returns true if the server has reached its full capacity.
+     * @return true if the server has reached its full capacity.
+     */
+    boolean isFull() {
         return futureEvents.size() == MAXIMUM_QUEUE_LENGTH;
     }
 
-    public boolean isResting() {
+    /**
+     * Returns true if the server has future events.
+     * @return true if the server has future events.
+     */
+    boolean hasFutureEvents() {
+        return futureEvents.size() != 0;
+    }
+
+    /**
+     * Returns the queue length of the server.
+     * @return the queue length of the server.
+     */
+    int getQueueLength() {
+        return futureEvents.size();
+    }
+
+    /**
+     * Returns true if the server is currently resting.
+     * @return true if the server is currently resting.
+     */
+    boolean isResting() {
         return this.isResting;
     }
 
-    public void setResting() {
+    /**
+     * Sets the server to rest.
+     */
+    void rests() {
         this.isResting = true;
     }
 
-    public void setAwake() {
+    /**
+     * Wake the server.
+     */
+    void wakes() {
         this.isResting = false;
     }
 
-    public boolean equals(Server other) {
-        return this.getID() == other.getID();
-    }
-
+    /**
+     * Returns the String representation of the Server.
+     */
     @Override
     public String toString() {
-        return String.format("server %d", id);
+        String output = null;
+        switch (serverType) {
+            case HUMAN_SERVER:
+                output = String.format("server %d", id);
+                break;
+            case SELF_CHECKOUT:
+                output = String.format("self-check %d", id);
+                break;
+            default:
+                break;
+        }
+        return output;
     }
 }

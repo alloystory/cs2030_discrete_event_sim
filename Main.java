@@ -3,22 +3,34 @@ import java.util.List;
 import java.util.ArrayList;
 
 import cs2030.simulator.Simulator;
+import cs2030.simulator.EventManager;
+import cs2030.simulator.ServerManager;
+import cs2030.simulator.CustomerManager;
+import cs2030.simulator.StatisticsManager;
 
-public class Main {
+public final class Main {
+    /**
+     * Main Program to run.
+     * @param args input arguments
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        int baseSeed = scanner.nextInt();
-        int numberOfServers = scanner.nextInt();
-        int numberOfSelfCheckoutCounters = scanner.nextInt();
-        int maximumQueueLength = scanner.nextInt();
-        int numberOfCustomers = scanner.nextInt();
-        double arrivalRate = scanner.nextDouble();
-        double serviceRate = scanner.nextDouble();
-        double restingRate = scanner.nextDouble();
-        double restingProbability = scanner.nextDouble();
-        double greedyCustomerProbability = scanner.nextDouble();
-
-        Simulator simulator = new Simulator(baseSeed, numberOfServers, numberOfSelfCheckoutCounters, maximumQueueLength, numberOfCustomers, arrivalRate, serviceRate, restingRate, restingProbability, greedyCustomerProbability);
+        Simulator simulator = new Simulator(scanner.nextInt(),
+                                            scanner.nextInt(),
+                                            scanner.nextInt(),
+                                            scanner.nextInt(),
+                                            scanner.nextInt(),
+                                            scanner.nextDouble(),
+                                            scanner.nextDouble(),
+                                            scanner.nextDouble(),
+                                            scanner.nextDouble(),
+                                            scanner.nextDouble());
+        
+        EventManager eventManager = new EventManager();
+        ServerManager serverManager = new ServerManager();
+        CustomerManager customerManager = new CustomerManager();
+        StatisticsManager statisticsManager = new StatisticsManager();
+        simulator.setManagers(eventManager, serverManager, customerManager, statisticsManager);
         simulator.start();
     }
 }
