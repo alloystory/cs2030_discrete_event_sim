@@ -24,7 +24,7 @@ public class ServerManager {
     public Server findIdleServer() {
         Server output = null;
         for (Server server : servers) {
-            if (!server.isBusy()) {
+            if (!server.isResting() && !server.isBusy()) {
                 output = server;
                 break;
             }

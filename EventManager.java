@@ -27,4 +27,17 @@ public class EventManager {
     public Event nextEvent() {
         return globalEventQueue.poll();
     }
+
+    public void delayEventsByServer(Server server, Time restPeriod) {
+        PriorityQueue<Event> duplicatedQueue = new PriorityQueue<>();
+        while (!globalEventQueue.isEmpty()) {
+            Event event = globalEventQueue.poll();
+            if (event.getServer() != null && event.getServer().equals(server)) {
+                Time nextTime = event.getTime().add(restPeriod);
+                event = event.setTime(nextTime);
+            }
+            duplicatedQueue.offer(event);
+        }
+        globalEventQueue = duplicatedQueue;
+    }
 }

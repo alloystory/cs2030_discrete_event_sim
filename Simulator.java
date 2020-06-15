@@ -8,15 +8,17 @@ public class Simulator {
     private RandomGenerator randomGenerator;
 
     private int numberOfCustomers;
+    private double restingProbability;
     private Time arrivalTime;
 
-    public Simulator(int baseSeed, int numberOfServers, int maximumQueueLength, int numberOfCustomers, double arrivalRate, double serviceRate) {
+    public Simulator(int baseSeed, int numberOfServers, int maximumQueueLength, int numberOfCustomers, double arrivalRate, double serviceRate, double restingRate, double restingProbability) {
         this.serverManager = new ServerManager();
         this.customerManager = new CustomerManager();
         this.eventManager = new EventManager();
         this.statisticsManager = new StatisticsManager();
-        this.randomGenerator = new RandomGenerator(baseSeed, arrivalRate, serviceRate);
+        this.randomGenerator = new RandomGenerator(baseSeed, arrivalRate, serviceRate, restingRate);
         this.numberOfCustomers = numberOfCustomers;
+        this.restingProbability = restingProbability;
         this.arrivalTime = new Time();
 
         for (int i = 0; i < numberOfServers; i++) {
@@ -46,6 +48,12 @@ public class Simulator {
                 case Event.DONE:
                     doneEventHandler(event);
                     break;
+                case Event.SERVER_REST:
+                    serverRestHandler(event);
+                    break;
+                case Event.SERVER_BACK:
+                    serverBackHandler(event);
+                    break;
                 default:
                     break;
             }
@@ -74,12 +82,12 @@ public class Simulator {
 
         if (server != null) {
             nextEvent = event.setType(Event.SERVED).setServer(server);
-            server.addEvent(nextEvent);
+            server.setCurrentEvent(nextEvent);
         } else {
             server = serverManager.findAvailableServer();
             if (server != null) {
                 nextEvent = event.setType(Event.WAITS).setServer(server);
-                server.addEvent(nextEvent);
+                server.addFutureEvent(nextEvent);
             }
         }
         
@@ -97,21 +105,55 @@ public class Simulator {
     }
 
     private void doneEventHandler(Event event) {
+        boolean isResting = false;
+        if (randomGenerator.genRandomRest() < restingProbability) {
+            Event nextEvent = event.setType(Event.SERVER_REST);
+            eventManager.add(nextEvent);
+            isResting = true;
+        }
+        
         Server server = event.getServer();
         server.deleteCurrentEvent();
-        if (server.isBusy()) {
-            Event serverCurrentEvent = server.deleteCurrentEvent();
-            Event nextEvent = serverCurrentEvent.setType(Event.SERVED).setTime(event.getTime());
+        if (!isResting && server.hasWaitingEvents()) {
+            Event serverFutureEvent = server.pollFutureEvent();
+            Event nextEvent = serverFutureEvent.setType(Event.SERVED).setTime(event.getTime());
             server.setCurrentEvent(nextEvent);
             eventManager.add(nextEvent);
 
-            Time waitingTime = nextEvent.getTime().minus(serverCurrentEvent.getTime());
+            Time waitingTime = nextEvent.getTime().minus(serverFutureEvent.getTime());
             statisticsManager.addWaitingTime(waitingTime);
         }
     }
 
-
     private void leftEventHandler() {
         statisticsManager.addLeft();
+    }
+
+    private void serverRestHandler(Event event) {
+        Server server = event.getServer();
+        Time restPeriod = new Time(randomGenerator.genRestPeriod());
+        server.setResting(restPeriod);
+        eventManager.delayEventsByServer(server, restPeriod);
+
+        Time nextTime = event.getTime().add(restPeriod);
+        Event nextEvent = event.setType(Event.SERVER_BACK).setTime(nextTime);
+        eventManager.add(nextEvent);
+    }
+
+    private void serverBackHandler(Event event) {
+        Server server = event.getServer();
+        server.setAwake();
+        
+        Event serverFutureEvent = server.pollFutureEvent();
+        server.setCurrentEvent(serverFutureEvent);
+        
+        if (serverFutureEvent != null) {
+            Event nextEvent = serverFutureEvent.setType(Event.SERVED).setTime(event.getTime());
+            server.setCurrentEvent(nextEvent);
+            eventManager.add(nextEvent);
+
+            Time waitingTime = nextEvent.getTime().minus(serverFutureEvent.getTime());
+            statisticsManager.addWaitingTime(waitingTime);
+        }
     }
 }

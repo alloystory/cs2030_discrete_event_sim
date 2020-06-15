@@ -12,6 +12,8 @@ public class Event implements Comparable<Event> {
     public static final int SERVED = 3;
     public static final int LEAVES = 4;
     public static final int DONE = 5;
+    public static final int SERVER_REST = 6;
+    public static final int SERVER_BACK = 7;
 
     public Event(int id) {
         this.id = id;
@@ -80,21 +82,27 @@ public class Event implements Comparable<Event> {
         String output = null;
 
         switch (eventType) {
-        case ARRIVES:
-            output = String.format("%s %d arrives", time.toString(), customer.getID());
-            break;
-        case WAITS:
-            output = String.format("%s %d waits to be served by %d", time.toString(), customer.getID(), server.getID());
-            break;
-        case SERVED:
-            output = String.format("%s %d served by %d", time.toString(), customer.getID(), server.getID());
-            break;
-        case LEAVES:
-            output = String.format("%s %d leaves", time.toString(), customer.getID());
-            break;
-        case DONE:
-            output = String.format("%s %d done serving by %d", time.toString(), customer.getID(), server.getID());
-            break;
+            case ARRIVES:
+                output = String.format("%s %d arrives", time.toString(), customer.getID());
+                break;
+            case WAITS:
+                output = String.format("%s %d waits to be served by %d", time.toString(), customer.getID(), server.getID());
+                break;
+            case SERVED:
+                output = String.format("%s %d served by %d", time.toString(), customer.getID(), server.getID());
+                break;
+            case LEAVES:
+                output = String.format("%s %d leaves", time.toString(), customer.getID());
+                break;
+            case DONE:
+                output = String.format("%s %d done serving by %d", time.toString(), customer.getID(), server.getID());
+                break;
+            case SERVER_REST:
+                output = String.format("%s server %d rest", time.toString(), server.getID());
+                break;
+            case SERVER_BACK:
+                output = String.format("%s server %d back", time.toString(), server.getID());
+                break;
         }
 
         return output;

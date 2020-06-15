@@ -13,8 +13,10 @@ public class Main {
         int numberOfCustomers = scanner.nextInt();
         double arrivalRate = scanner.nextDouble();
         double serviceRate = scanner.nextDouble();
+        double restingRate = scanner.nextDouble();
+        double restingProbability = scanner.nextDouble();
 
-        Simulator simulator = new Simulator(baseSeed, numberOfServers, maximumQueueLength, numberOfCustomers, arrivalRate, serviceRate);
+        Simulator simulator = new Simulator(baseSeed, numberOfServers, maximumQueueLength, numberOfCustomers, arrivalRate, serviceRate, restingRate, restingProbability);
         simulator.start();
     }
 }
