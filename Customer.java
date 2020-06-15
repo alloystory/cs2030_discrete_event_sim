@@ -1,7 +1,7 @@
 package cs2030.simulator;
 
 public class Customer {
-    private int id;
+    protected int id;
 
     public Customer(int id) {
         this.id = id;

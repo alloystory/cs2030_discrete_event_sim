@@ -9,9 +9,10 @@ public class Simulator {
 
     private int numberOfCustomers;
     private double restingProbability;
+    private double greedyCustomerProbability;
     private Time arrivalTime;
 
-    public Simulator(int baseSeed, int numberOfServers, int numberOfSelfCheckoutCounters, int maximumQueueLength, int numberOfCustomers, double arrivalRate, double serviceRate, double restingRate, double restingProbability) {
+    public Simulator(int baseSeed, int numberOfServers, int numberOfSelfCheckoutCounters, int maximumQueueLength, int numberOfCustomers, double arrivalRate, double serviceRate, double restingRate, double restingProbability, double greedyCustomerProbability) {
         this.serverManager = new ServerManager();
         this.customerManager = new CustomerManager();
         this.eventManager = new EventManager();
@@ -19,6 +20,7 @@ public class Simulator {
         this.randomGenerator = new RandomGenerator(baseSeed, arrivalRate, serviceRate, restingRate);
         this.numberOfCustomers = numberOfCustomers;
         this.restingProbability = restingProbability;
+        this.greedyCustomerProbability = greedyCustomerProbability;
         this.arrivalTime = new Time();
 
         for (int i = 0; i < numberOfServers; i++) {
@@ -67,7 +69,12 @@ public class Simulator {
 
     private void addArrival() {
         if (numberOfCustomers != 0) {
-            Customer customer = customerManager.createCustomer();
+            Customer customer = null;
+            if (randomGenerator.genCustomerType() < greedyCustomerProbability) {
+                customer = customerManager.createGreedyCustomer();
+            } else {
+                customer = customerManager.createCustomer();
+            }
             customerManager.add(customer);
             numberOfCustomers--;
             
@@ -88,7 +95,13 @@ public class Simulator {
             nextEvent = event.setType(Event.SERVED).setServer(server);
             server.setCurrentEvent(nextEvent);
         } else {
-            server = serverManager.findAvailableServer();
+            Customer customer = event.getCustomer();
+            if (customer instanceof GreedyCustomer) {
+                server = serverManager.findShortestQueueServer();
+            } else {
+                server = serverManager.findAvailableServer();
+            }
+
             if (server != null) {
                 nextEvent = event.setType(Event.WAITS).setServer(server);
                 server.addFutureEvent(nextEvent);

@@ -16,8 +16,9 @@ public class Main {
         double serviceRate = scanner.nextDouble();
         double restingRate = scanner.nextDouble();
         double restingProbability = scanner.nextDouble();
+        double greedyCustomerProbability = scanner.nextDouble();
 
-        Simulator simulator = new Simulator(baseSeed, numberOfServers, numberOfSelfCheckoutCounters, maximumQueueLength, numberOfCustomers, arrivalRate, serviceRate, restingRate, restingProbability);
+        Simulator simulator = new Simulator(baseSeed, numberOfServers, numberOfSelfCheckoutCounters, maximumQueueLength, numberOfCustomers, arrivalRate, serviceRate, restingRate, restingProbability, greedyCustomerProbability);
         simulator.start();
     }
 }

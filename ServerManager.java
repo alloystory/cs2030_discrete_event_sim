@@ -47,4 +47,16 @@ public class ServerManager {
         }
         return output;
     }
+
+    public Server findShortestQueueServer() {
+        Server output = null;
+        int queueLength = Integer.MAX_VALUE;
+        for (Server server : servers) {
+            if (!server.isFull() && server.getQueueLength() < queueLength) {
+                output = server;
+                queueLength = server.getQueueLength();
+            }
+        }
+        return output;
+    }
 }

@@ -17,6 +17,11 @@ public class CustomerManager {
         return new Customer(customerCount);
     }
 
+    public Customer createGreedyCustomer() {
+        customerCount++;
+        return new GreedyCustomer(customerCount);
+    }
+
     public void add(Customer customer) {
         customers.add(customer);
     }

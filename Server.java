@@ -56,6 +56,10 @@ public class Server {
         return futureEvents.size() != 0;
     }
 
+    public int getQueueLength() {
+        return futureEvents.size();
+    }
+
     public boolean isFull() {
         return futureEvents.size() == MAXIMUM_QUEUE_LENGTH;
     }
