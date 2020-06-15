@@ -9,6 +9,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int baseSeed = scanner.nextInt();
         int numberOfServers = scanner.nextInt();
+        int numberOfSelfCheckoutCounters = scanner.nextInt();
         int maximumQueueLength = scanner.nextInt();
         int numberOfCustomers = scanner.nextInt();
         double arrivalRate = scanner.nextDouble();
@@ -16,7 +17,7 @@ public class Main {
         double restingRate = scanner.nextDouble();
         double restingProbability = scanner.nextDouble();
 
-        Simulator simulator = new Simulator(baseSeed, numberOfServers, maximumQueueLength, numberOfCustomers, arrivalRate, serviceRate, restingRate, restingProbability);
+        Simulator simulator = new Simulator(baseSeed, numberOfServers, numberOfSelfCheckoutCounters, maximumQueueLength, numberOfCustomers, arrivalRate, serviceRate, restingRate, restingProbability);
         simulator.start();
     }
 }

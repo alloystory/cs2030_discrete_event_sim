@@ -11,7 +11,7 @@ public class Simulator {
     private double restingProbability;
     private Time arrivalTime;
 
-    public Simulator(int baseSeed, int numberOfServers, int maximumQueueLength, int numberOfCustomers, double arrivalRate, double serviceRate, double restingRate, double restingProbability) {
+    public Simulator(int baseSeed, int numberOfServers, int numberOfSelfCheckoutCounters, int maximumQueueLength, int numberOfCustomers, double arrivalRate, double serviceRate, double restingRate, double restingProbability) {
         this.serverManager = new ServerManager();
         this.customerManager = new CustomerManager();
         this.eventManager = new EventManager();
@@ -22,7 +22,11 @@ public class Simulator {
         this.arrivalTime = new Time();
 
         for (int i = 0; i < numberOfServers; i++) {
-            serverManager.add(serverManager.createServer());
+            serverManager.add(serverManager.createHumanServer());
+        }
+
+        for (int i = 0; i < numberOfSelfCheckoutCounters; i++) {
+            serverManager.add(serverManager.createSelfCheckoutCounter());
         }
 
         Server.MAXIMUM_QUEUE_LENGTH = maximumQueueLength;
@@ -105,14 +109,14 @@ public class Simulator {
     }
 
     private void doneEventHandler(Event event) {
+        Server server = event.getServer();
         boolean isResting = false;
-        if (randomGenerator.genRandomRest() < restingProbability) {
+        if (!(server instanceof SelfCheckoutCounter) && randomGenerator.genRandomRest() < restingProbability) {
             Event nextEvent = event.setType(Event.SERVER_REST);
             eventManager.add(nextEvent);
             isResting = true;
         }
         
-        Server server = event.getServer();
         server.deleteCurrentEvent();
         if (!isResting && server.hasWaitingEvents()) {
             Event serverFutureEvent = server.pollFutureEvent();
@@ -132,7 +136,7 @@ public class Simulator {
     private void serverRestHandler(Event event) {
         Server server = event.getServer();
         Time restPeriod = new Time(randomGenerator.genRestPeriod());
-        server.setResting(restPeriod);
+        server.setResting();
         eventManager.delayEventsByServer(server, restPeriod);
 
         Time nextTime = event.getTime().add(restPeriod);

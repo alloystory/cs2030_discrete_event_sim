@@ -83,25 +83,25 @@ public class Event implements Comparable<Event> {
 
         switch (eventType) {
             case ARRIVES:
-                output = String.format("%s %d arrives", time.toString(), customer.getID());
+                output = String.format("%s %s arrives", time.toString(), customer.toString());
                 break;
             case WAITS:
-                output = String.format("%s %d waits to be served by %d", time.toString(), customer.getID(), server.getID());
+                output = String.format("%s %s waits to be served by %s", time.toString(), customer.toString(), server.toString());
                 break;
             case SERVED:
-                output = String.format("%s %d served by %d", time.toString(), customer.getID(), server.getID());
+                output = String.format("%s %s served by %s", time.toString(), customer.toString(), server.toString());
                 break;
             case LEAVES:
-                output = String.format("%s %d leaves", time.toString(), customer.getID());
+                output = String.format("%s %s leaves", time.toString(), customer.toString());
                 break;
             case DONE:
-                output = String.format("%s %d done serving by %d", time.toString(), customer.getID(), server.getID());
+                output = String.format("%s %s done serving by %s", time.toString(), customer.toString(), server.toString());
                 break;
             case SERVER_REST:
-                output = String.format("%s server %d rest", time.toString(), server.getID());
+                output = String.format("%s %s rest", time.toString(), server.toString());
                 break;
             case SERVER_BACK:
-                output = String.format("%s server %d back", time.toString(), server.getID());
+                output = String.format("%s %s back", time.toString(), server.toString());
                 break;
         }
 

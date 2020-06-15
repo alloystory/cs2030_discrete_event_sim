@@ -12,9 +12,14 @@ public class ServerManager {
         this.serverCount = 0;
     }
 
-    public Server createServer() {
+    public Server createHumanServer() {
         serverCount++;
         return new Server(serverCount);
+    }
+
+    public Server createSelfCheckoutCounter() {
+        serverCount++;
+        return new SelfCheckoutCounter(serverCount);
     }
 
     public void add(Server server) {

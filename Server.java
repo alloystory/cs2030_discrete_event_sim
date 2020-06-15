@@ -4,10 +4,10 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 public class Server {
-    private int id;
-    private Event currentEvent;
-    private Deque<Event> futureEvents;
-    private boolean isResting;
+    protected int id;
+    protected Event currentEvent;
+    protected Deque<Event> futureEvents;
+    protected boolean isResting;
 
     public static int MAXIMUM_QUEUE_LENGTH;
 
@@ -64,19 +64,8 @@ public class Server {
         return this.isResting;
     }
 
-    public void setResting(Time restPeriod) {
+    public void setResting() {
         this.isResting = true;
-        
-        // if (currentEvent != null) {
-        //     Time nextTime = currentEvent.getTime().add(restPeriod);
-        //     currentEvent = currentEvent.setTime(nextTime);
-        // }
-        // for (int i = 0; i < futureEvents.size(); i++) {
-        //     Event futureEvent = futureEvents.poll();
-        //     Time nextTime = futureEvent.getTime().add(restPeriod);
-        //     futureEvent = futureEvent.setTime(nextTime);
-        //     futureEvents.offer(futureEvent);
-        // }
     }
 
     public void setAwake() {
@@ -85,5 +74,10 @@ public class Server {
 
     public boolean equals(Server other) {
         return this.getID() == other.getID();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("server %d", id);
     }
 }
