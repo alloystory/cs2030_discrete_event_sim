@@ -4,19 +4,20 @@ import java.util.List;
 import java.util.Iterator;
 
 public class Simulator {
-    private List<Double> _arrivalTimes;
     private CustomerManager _customerManager;
     private EventManager _eventManager;
     private ServerManager _serverManager;
     private StatisticsManager _statsManager;
+    private RandomGenerator _randomGenerator;
     private boolean _debug;
+    public static final Time STARTING_TIME = new Time();
 
-    public Simulator(List<Double> arrivalTimes, int numberOfServers, boolean debug) {
-        this._arrivalTimes = arrivalTimes;
-        this._customerManager = new CustomerManager(arrivalTimes.size());
+    public Simulator(int baseSeed, int numberOfServers, int numberOfCustomers, double arrivalRate, double serviceRate, boolean debug) {
+        this._customerManager = new CustomerManager(numberOfCustomers);
         this._eventManager = new EventManager();
         this._serverManager = new ServerManager(numberOfServers);
         this._statsManager = new StatisticsManager();
+        this._randomGenerator = new RandomGenerator(baseSeed, arrivalRate, serviceRate);
         this._debug = debug;
     }
 
@@ -36,16 +37,12 @@ public class Simulator {
     }
 
     private void addArrivals() {
-        Iterator<Customer> customerIterator = _customerManager.iterator();
-        Iterator<Double> arrivalIterator = _arrivalTimes.iterator();
-
-        while (customerIterator.hasNext() && arrivalIterator.hasNext()) {
-            Customer customer = customerIterator.next();
-            double arrivalTime = arrivalIterator.next();
-
-            Event event = new Event(customer.getID(), Event.ARRIVES, new Time(arrivalTime));
+        Time arrivalTime = STARTING_TIME;
+        for (Customer customer : _customerManager) {
+            Event event = new Event(customer.getID(), Event.ARRIVES, arrivalTime);
             _eventManager.add(event);
             if (_debug) System.out.println(event);
+            arrivalTime = arrivalTime.add(new Time(_randomGenerator.genInterArrivalTime()));
         }
         if (_debug) System.out.println();
     }

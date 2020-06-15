@@ -62,6 +62,8 @@ public class Event implements Comparable<Event> {
         int output = this.getTime().compareTo(other.getTime());
         if (output == 0)
             output = other.getType() - this.getType();
+        if (output == 0)
+            output = this.getID() - other.getID();
         return output;
     }
 

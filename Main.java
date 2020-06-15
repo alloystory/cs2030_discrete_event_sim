@@ -7,12 +7,13 @@ import cs2030.simulator.Simulator;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        int baseSeed = scanner.nextInt();
         int numberOfServers = scanner.nextInt();
-        List<Double> arrivalTimes = new ArrayList<>();
-        while (scanner.hasNextDouble()) {
-            arrivalTimes.add(scanner.nextDouble());
-        }
-        Simulator simulator = new Simulator(arrivalTimes, numberOfServers, false);
+        int numberOfCustomers = scanner.nextInt();
+        double arrivalRate = scanner.nextDouble();
+        double serviceRate = scanner.nextDouble();
+
+        Simulator simulator = new Simulator(baseSeed, numberOfServers, numberOfCustomers, arrivalRate, serviceRate, false);
         simulator.start();
     }
 }
