@@ -1,14 +1,13 @@
-import java.util.Queue;
-import java.util.LinkedList;
+import java.util.PriorityQueue;
 
 public class EventManager {
-    private Queue<Event> _queue;
+    private PriorityQueue<Event> _queue;
 
     public EventManager() {
-        this._queue = new LinkedList<Event>();
+        this._queue = new PriorityQueue<Event>();
     }
 
-    public void addEvent(Event event) {
+    public void add(Event event) {
         _queue.offer(event);
     }
 
