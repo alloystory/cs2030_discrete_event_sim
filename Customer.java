@@ -1,3 +1,5 @@
+package cs2030.simulator;
+
 public class Customer {
     private int _id;
 

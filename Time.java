@@ -1,3 +1,5 @@
+package cs2030.simulator;
+
 public class Time implements Comparable<Time> {
     private double _time;    
     public Time(double time) {

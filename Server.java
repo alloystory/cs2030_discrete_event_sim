@@ -1,3 +1,5 @@
+package cs2030.simulator;
+
 public class Server {
     private int _id;
     private Time _nextTime;

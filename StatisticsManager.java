@@ -1,3 +1,5 @@
+package cs2030.simulator;
+
 public class StatisticsManager {
     private Time _totalWaitingTime;
     private int _numberOfCustomersServed;

@@ -1,3 +1,5 @@
+package cs2030.simulator;
+
 public class Event implements Comparable<Event> {
     private int _id;
     private int _customerID;
