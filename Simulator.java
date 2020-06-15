@@ -4,82 +4,93 @@ import java.util.List;
 import java.util.Iterator;
 
 public class Simulator {
-    private CustomerManager _customerManager;
-    private EventManager _eventManager;
-    private ServerManager _serverManager;
-    private StatisticsManager _statsManager;
-    private RandomGenerator _randomGenerator;
-    private boolean _debug;
+    private CustomerManager customerManager;
+    private EventManager eventManager;
+    private ServerManager serverManager;
+    private StatisticsManager statsManager;
+    private RandomGenerator randomGenerator;
+    private boolean debug;
     public static final Time STARTING_TIME = new Time();
 
     public Simulator(int baseSeed, int numberOfServers, int numberOfCustomers, double arrivalRate, double serviceRate, boolean debug) {
-        this._customerManager = new CustomerManager(numberOfCustomers);
-        this._eventManager = new EventManager();
-        this._serverManager = new ServerManager(numberOfServers);
-        this._statsManager = new StatisticsManager();
-        this._randomGenerator = new RandomGenerator(baseSeed, arrivalRate, serviceRate);
-        this._debug = debug;
+        this.customerManager = new CustomerManager(numberOfCustomers);
+        this.eventManager = new EventManager();
+        this.serverManager = new ServerManager(numberOfServers);
+        this.statsManager = new StatisticsManager();
+        this.randomGenerator = new RandomGenerator(baseSeed, arrivalRate, serviceRate);
+        this.debug = debug;
     }
 
     public void start() {
-        if (_debug) System.out.println("# Adding arrivals");
+        if (this.debug) System.out.println("# Adding arrivals");
         addArrivals();
-        while (_eventManager.hasNextEvent()) {
-            Event event = _eventManager.nextEvent();
-            if (_debug) System.out.println("# Get next event: " + event);
-            else        System.out.println(event);
+        
+        while (eventManager.hasNextEvent()) {
+            Event event = eventManager.nextEvent();
+            if (this.debug) System.out.println("# Get next event: " + event);
+            else            System.out.println(event);
             
             simulateLogic(event);
-            if (_debug) System.out.println((!_eventManager.toString().equals("")) ? _eventManager + "\n" : "");
+            if (this.debug) System.out.println((!eventManager.toString().equals("")) ? eventManager + "\n" : "");
         }
         
-        System.out.println(_statsManager);
+        System.out.println(this.statsManager);
     }
 
     private void addArrivals() {
         Time arrivalTime = STARTING_TIME;
-        for (Customer customer : _customerManager) {
+        for (Customer customer : customerManager) {
             Event event = new Event(customer.getID(), Event.ARRIVES, arrivalTime);
-            _eventManager.add(event);
-            if (_debug) System.out.println(event);
-            arrivalTime = arrivalTime.add(new Time(_randomGenerator.genInterArrivalTime()));
+            if (this.debug) System.out.println(event);
+            eventManager.add(event);
+            arrivalTime = arrivalTime.add(new Time(randomGenerator.genInterArrivalTime()));
         }
-        if (_debug) System.out.println();
+        if (this.debug) System.out.println();
     }
 
     private void simulateLogic(Event event) {
         Server server;
 
-        switch (event.getType()) {
+        switch (event.getEventType()) {
         case Event.ARRIVES:
-            server = _serverManager.getServerFreeAt(event.getTime());
+            server = serverManager.findIdleServer();
             if (server != null) {
-                server.workOn(event);
-                _eventManager.add(event.changeType(Event.SERVED).changeServer(server.getID()));
+                eventManager.add(event.changeEventType(Event.SERVED).changeServerID(server.getID()));
             } else {
-                server = _serverManager.getIdleServer();
+                server = serverManager.findAvailableServer();
                 if (server != null) {
-                    server.setNextEvent(event.getID());
-                    _eventManager.add(event.changeType(Event.WAITS).changeServer(server.getID()));
+                    eventManager.add(event.changeEventType(Event.WAITS).changeServerID(server.getID()));
                 } else {
-                    _eventManager.add(event.changeType(Event.LEAVES));
-                    _statsManager.addLeft();
+                    eventManager.add(event.changeEventType(Event.LEAVES));
                 }
             }
             break;
+        
         case Event.WAITS:
-            server = _serverManager.getServer(event.getServerID());
-            Event nextEvent = event.changeType(Event.SERVED).changeTime(server.nextTime());
-            _eventManager.add(nextEvent);
-            server.workOn(event);
-            _statsManager.addWaitingTime(nextEvent.getTime().minus(event.getTime()));
+            server = serverManager.findServerByID(event.getServerID());
+            server.setNextEventID(event.getID());
+            Event serverCurrentEvent = eventManager.findEventByID(server.getCurrentEventID());
+            Event nextEvent = event.changeEventType(Event.SERVED).changeTimestamp(serverCurrentEvent.getTimestamp());
+            eventManager.add(nextEvent);
+            statsManager.addWaitingTime(nextEvent.getTimestamp().minus(event.getTimestamp()));
             break;
+        
         case Event.SERVED:
-            server = _serverManager.getServer(event.getServerID());
-            server.setNextEvent(null);
-            _eventManager.add(event.changeType(Event.DONE).changeTime(server.nextTime()));
-            _statsManager.addServed();
+            server = serverManager.findServerByID(event.getServerID());
+            server.setCurrentEventID(event.getID());
+            Time nextEventTimestamp = event.getTimestamp().add(new Time(randomGenerator.genServiceTime()));
+            eventManager.add(event.changeEventType(Event.DONE).changeTimestamp(nextEventTimestamp));
+            statsManager.addServed();
             break;
+
+        case Event.LEAVES:
+            this.statsManager.addLeft();
+
+        case Event.DONE:
+            server = serverManager.findServerByID(event.getServerID());
+            server.setCurrentEventID(server.getNextEventID());
+            server.deleteNextEventID();
+        
         default:
             break;
         }

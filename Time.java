@@ -1,9 +1,9 @@
 package cs2030.simulator;
 
 public class Time implements Comparable<Time> {
-    private double _time;    
+    private double time;    
     public Time(double time) {
-        this._time = time;
+        this.time = time;
     }
 
     public Time() {
@@ -11,7 +11,7 @@ public class Time implements Comparable<Time> {
     }
 
     public double raw() {
-        return _time;
+        return this.time;
     }
 
     public Time add(Time other) {
@@ -29,6 +29,6 @@ public class Time implements Comparable<Time> {
 
     @Override
     public String toString() {
-        return String.format("%.3f", _time);
+        return String.format("%.3f", time);
     }
 }

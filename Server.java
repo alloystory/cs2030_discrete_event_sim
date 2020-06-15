@@ -1,40 +1,45 @@
 package cs2030.simulator;
 
 public class Server {
-    private int _id;
-    private Time _nextTime;
-    private Integer _nextEventID;
-
-    public static final Time SERVICE_TIME = new Time(1.0);
+    private int id;
+    private int currentEventID;
+    private int nextEventID;
 
     public Server(int id) {
-        this._id = id;
-        this._nextTime = new Time(0);
-        this._nextEventID = null;
+        this.id = id;
+        this.currentEventID = -1;
+        this.nextEventID = -1;
     }
 
     public int getID() {
-        return _id;
+        return this.id;
+    }
+
+    public int getCurrentEventID() {
+        return this.currentEventID;
+    }
+
+    public int getNextEventID() {
+        return this.nextEventID;
+    }
+
+    public void setCurrentEventID(int eventID) {
+        this.currentEventID = eventID;
+    }
+
+    public void setNextEventID(int eventID) {
+        this.nextEventID = eventID;
+    }
+
+    public void deleteNextEventID() {
+        this.nextEventID = -1;
+    }
+
+    public boolean isBusy() {
+        return currentEventID != -1;
     }
 
     public boolean hasNextEvent() {
-        return _nextEventID != null;
-    }
-
-    public void setNextEvent(Integer nextEventID) {
-        this._nextEventID = nextEventID;
-    }
-
-
-    public void workOn(Event event) {
-        if (event.getTime().compareTo(_nextTime) > 0) {
-            _nextTime = event.getTime().add(SERVICE_TIME);
-        } else {
-            _nextTime = _nextTime.add(SERVICE_TIME);
-        }
-    }
-
-    public Time nextTime() {
-        return _nextTime;
+        return nextEventID != -1;
     }
 }

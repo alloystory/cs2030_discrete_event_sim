@@ -1,18 +1,18 @@
 package cs2030.simulator;
 
 public class Customer {
-    private int _id;
+    private int id;
 
     public Customer(int id) {
-        this._id = id;
+        this.id = id;
     }
 
     public int getID() {
-        return _id;
+        return this.id;
     }
 
     @Override
     public String toString() {
-        return String.format("%d", _id);
+        return String.format("%d", this.id);
     }
 }

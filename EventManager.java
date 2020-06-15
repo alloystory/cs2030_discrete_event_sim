@@ -3,32 +3,48 @@ package cs2030.simulator;
 import java.util.PriorityQueue;
 
 public class EventManager {
-    private PriorityQueue<Event> _queue;
-    private int _currentID;
+    private PriorityQueue<Event> eventQueue;
+    private int currentEventID;
+
     public static final int STARTING_ID = 1;
     
     public EventManager() {
-        this._queue = new PriorityQueue<Event>();
-        this._currentID = STARTING_ID;
+        this.eventQueue = new PriorityQueue<Event>();
+        this.currentEventID = STARTING_ID;
     }
 
     public void add(Event event) {
-        event.setID(_currentID);
-        _currentID++;
-        _queue.offer(event);
+        if (event.getID() == -1) {
+            event = event.changeID(currentEventID);
+            currentEventID++;
+        }
+        this.eventQueue.offer(event);
     }
 
     public boolean hasNextEvent() {
-        return !_queue.isEmpty();
+        return !this.eventQueue.isEmpty();
     }
 
     public Event nextEvent() {
-        return _queue.poll();
+        return this.eventQueue.poll();
+    }
+
+    public Event findEventByID(int eventID) {
+        PriorityQueue<Event> duplicatedQueue = new PriorityQueue<>(eventQueue);
+        Event output = null;
+        while (!duplicatedQueue.isEmpty()) {
+            Event event = duplicatedQueue.poll();
+            if (event.getID() == eventID) {
+                output = event;
+                break;
+            }
+        }
+        return output;
     }
 
     @Override
     public String toString() {
-        PriorityQueue<Event> duplicatedQueue = new PriorityQueue<>(_queue);
+        PriorityQueue<Event> duplicatedQueue = new PriorityQueue<>(eventQueue);
         StringBuilder output = new StringBuilder();
         String separator = "";
 
