@@ -9,7 +9,7 @@ public class Main {
         while (scanner.hasNextDouble()) {
             arrivalTimes.add(scanner.nextDouble());
         }
-        Simulator simulator = new Simulator(arrivalTimes);
+        Simulator simulator = new Simulator(arrivalTimes, 1, true);
         simulator.start();
     }
 }

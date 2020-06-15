@@ -3,9 +3,11 @@ import java.util.ArrayList;
 
 public class ServerManager {
     private List<Server> _servers;
+    public static final int STARTING_ID = 1;
+
     public ServerManager(int numberOfServers) {
         this._servers = new ArrayList<>();
-        for (int i = 1; i <= numberOfServers; i++) {
+        for (int i = STARTING_ID; i <= numberOfServers; i++) {
             _servers.add(new Server(i));
         }
     }
@@ -20,5 +22,20 @@ public class ServerManager {
             }
         }
         return output;
+    }
+
+    public Server getIdleServer() {
+        Server output = null;
+        for (Server server : _servers) {
+            if (!server.hasNextEvent()) {
+                output = server;
+                break;
+            }
+        }
+        return output;
+    }
+
+    public Server getServer(int index) {
+        return _servers.get(index - STARTING_ID);
     }
 }

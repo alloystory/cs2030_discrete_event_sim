@@ -1,7 +1,11 @@
 public class Time implements Comparable<Time> {
-    private double _time;
+    private double _time;    
     public Time(double time) {
         this._time = time;
+    }
+
+    public Time() {
+        this(0);
     }
 
     public double raw() {

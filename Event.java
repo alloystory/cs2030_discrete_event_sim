@@ -1,16 +1,34 @@
 public class Event implements Comparable<Event> {
-    private Customer _customer;
+    private int _id;
+    private int _customerID;
     private int _eventType;
     private Time _time;
+    private int _serverID;
 
     public static final int ARRIVES = 1;
-    public static final int SERVED = 2;
-    public static final int LEAVES = 3;
+    public static final int WAITS = 2;
+    public static final int SERVED = 3;
+    public static final int LEAVES = 4;
+    public static final int DONE = 5;
 
-    public Event(Customer customer, int eventType, Time time) {
-        this._customer = customer;
+    public Event(int customerID, int eventType, Time time) {
+        this._customerID = customerID;
         this._eventType = eventType;
         this._time = time;
+        this._serverID = -1;
+    }
+
+    public Event(int customerID, int eventType, Time time, int serverID) {
+        this(customerID, eventType, time);
+        this._serverID = serverID;
+    }
+
+    public void setID(int id) {
+        this._id = id;
+    }
+
+    public int getID() {
+        return _id;
     }
 
     public Time getTime() {
@@ -21,17 +39,28 @@ public class Event implements Comparable<Event> {
         return _eventType;
     }
 
-    public Event changeType(int et) {
-        return new Event(_customer, et, _time);
+    public int getServerID() {
+        return _serverID;
+    }
+
+    public Event changeType(int eventType) {
+        return new Event(_customerID, eventType, _time, _serverID);
     }
 
     public Event changeTime(Time time) {
-        return new Event(_customer, _eventType, time);
+        return new Event(_customerID, _eventType, time, _serverID);
+    }
+
+    public Event changeServer(int serverID) {
+        return new Event(_customerID, _eventType, _time, serverID);
     }
 
     @Override
     public int compareTo(Event other) {
-        return this.getTime().compareTo(other.getTime());
+        int output = this.getTime().compareTo(other.getTime());
+        if (output == 0)
+            output = other.getType() - this.getType();
+        return output;
     }
 
     @Override
@@ -40,13 +69,19 @@ public class Event implements Comparable<Event> {
 
         switch (_eventType) {
         case ARRIVES:
-            output = String.format("%s %s arrives", _time.toString(), _customer.toString());
+            output = String.format("%s %d arrives", _time.toString(), _customerID);
+            break;
+        case WAITS:
+            output = String.format("%s %d waits", _time.toString(), _customerID);
             break;
         case SERVED:
-            output = String.format("%s %s served", _time.toString(), _customer.toString());
+            output = String.format("%s %d served", _time.toString(), _customerID);
             break;
         case LEAVES:
-            output = String.format("%s %s leaves", _time.toString(), _customer.toString());
+            output = String.format("%s %d leaves", _time.toString(), _customerID);
+            break;
+        case DONE:
+            output = String.format("%s %d done", _time.toString(), _customerID);
             break;
         }
 

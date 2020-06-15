@@ -5,6 +5,10 @@ public class Customer {
         this._id = id;
     }
 
+    public int getID() {
+        return _id;
+    }
+
     @Override
     public String toString() {
         return String.format("%d", _id);
