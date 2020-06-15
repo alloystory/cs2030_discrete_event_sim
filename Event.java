@@ -72,16 +72,16 @@ public class Event implements Comparable<Event> {
             output = String.format("%s %d arrives", _time.toString(), _customerID);
             break;
         case WAITS:
-            output = String.format("%s %d waits", _time.toString(), _customerID);
+            output = String.format("%s %d waits to be served by %d", _time.toString(), _customerID, _serverID);
             break;
         case SERVED:
-            output = String.format("%s %d served", _time.toString(), _customerID);
+            output = String.format("%s %d served by %d", _time.toString(), _customerID, _serverID);
             break;
         case LEAVES:
             output = String.format("%s %d leaves", _time.toString(), _customerID);
             break;
         case DONE:
-            output = String.format("%s %d done", _time.toString(), _customerID);
+            output = String.format("%s %d done serving by %d", _time.toString(), _customerID, _serverID);
             break;
         }
 
