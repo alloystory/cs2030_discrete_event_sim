@@ -25,7 +25,9 @@ public class StatisticsManager {
 
     @Override
     public String toString() {
-        Time _averageWaitingTime = new Time(totalWaitingTime.raw() / (double) numberOfCustomersServed);
-        return String.format("[%s %d %d]", _averageWaitingTime.toString(), numberOfCustomersServed, numberOfCustomersLeft);
+        Time averageWaitingTime = new Time();
+        if (numberOfCustomersServed > 0)
+            averageWaitingTime = new Time(totalWaitingTime.raw() / (double) numberOfCustomersServed);
+        return String.format("[%s %d %d]", averageWaitingTime.toString(), numberOfCustomersServed, numberOfCustomersLeft);
     }
 }

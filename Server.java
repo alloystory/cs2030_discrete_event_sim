@@ -1,45 +1,55 @@
 package cs2030.simulator;
 
+import java.util.Deque;
+import java.util.LinkedList;
+
 public class Server {
     private int id;
-    private int currentEventID;
-    private int nextEventID;
+    private Event currentEvent;
+    private Deque<Event> futureEvents;
+
+    public static int MAXIMUM_QUEUE_LENGTH;
 
     public Server(int id) {
         this.id = id;
-        this.currentEventID = -1;
-        this.nextEventID = -1;
+        this.currentEvent = null;
+        this.futureEvents = new LinkedList<>();
     }
 
     public int getID() {
         return this.id;
     }
 
-    public int getCurrentEventID() {
-        return this.currentEventID;
+    public Event getCurrentEvent() {
+        return currentEvent;
     }
 
-    public int getNextEventID() {
-        return this.nextEventID;
+    public void setCurrentEvent(Event event) {
+        if (currentEvent != null) {
+            futureEvents.offerFirst(currentEvent);
+        }
+        currentEvent = event;
     }
 
-    public void setCurrentEventID(int eventID) {
-        this.currentEventID = eventID;
+    public void addEvent(Event event) {
+        if (currentEvent == null) {
+            currentEvent = event;
+        } else {
+            this.futureEvents.offer(event);
+        }
     }
 
-    public void setNextEventID(int eventID) {
-        this.nextEventID = eventID;
-    }
-
-    public void deleteNextEventID() {
-        this.nextEventID = -1;
+    public Event deleteCurrentEvent() {
+        Event output = currentEvent;
+        currentEvent = futureEvents.poll();
+        return output;
     }
 
     public boolean isBusy() {
-        return currentEventID != -1;
+        return currentEvent != null;
     }
 
-    public boolean hasNextEvent() {
-        return nextEventID != -1;
+    public boolean isFull() {
+        return futureEvents.size() == MAXIMUM_QUEUE_LENGTH;
     }
 }

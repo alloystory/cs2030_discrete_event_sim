@@ -9,11 +9,12 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int baseSeed = scanner.nextInt();
         int numberOfServers = scanner.nextInt();
+        int maximumQueueLength = scanner.nextInt();
         int numberOfCustomers = scanner.nextInt();
         double arrivalRate = scanner.nextDouble();
         double serviceRate = scanner.nextDouble();
 
-        Simulator simulator = new Simulator(baseSeed, numberOfServers, numberOfCustomers, arrivalRate, serviceRate, false);
+        Simulator simulator = new Simulator(baseSeed, numberOfServers, maximumQueueLength, numberOfCustomers, arrivalRate, serviceRate);
         simulator.start();
     }
 }

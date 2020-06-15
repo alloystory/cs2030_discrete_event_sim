@@ -2,10 +2,10 @@ package cs2030.simulator;
 
 public class Event implements Comparable<Event> {
     private int id;
-    private Time timeStamp;
-    private int customerID;
+    private Time time;
+    private Customer customer;
     private int eventType;
-    private int serverID;
+    private Server server;
 
     public static final int ARRIVES = 1;
     public static final int WAITS = 2;
@@ -13,55 +13,61 @@ public class Event implements Comparable<Event> {
     public static final int LEAVES = 4;
     public static final int DONE = 5;
 
-    public Event(int customerID, int eventType, Time timeStamp) {
-        this.id = -1;
-        this.customerID = customerID;
-        this.eventType = eventType;
-        this.timeStamp = timeStamp;
-        this.serverID = -1;
+    public Event(int id) {
+        this.id = id;
+        this.time = null;
+        this.customer = null;
+        this.eventType = -1;
+        this.server = null;
     }
 
-    public Event(int id, int customerID, int eventType, Time timeStamp, int serverID) {
-        this(customerID, eventType, timeStamp);
+    private Event(int id, Customer customer, int eventType, Time time, Server server) {
         this.id = id;
-        this.serverID = serverID;
+        this.time = time;
+        this.customer = customer;
+        this.eventType = eventType;
+        this.server = server;
     }
 
     public int getID() {
         return this.id;
     }
 
-    public Time getTimestamp() {
-        return this.timeStamp;
+    public Time getTime() {
+        return this.time;
     }
 
     public int getEventType() {
         return this.eventType;
     }
 
-    public int getServerID() {
-        return this.serverID;
+    public Customer getCustomer() {
+        return this.customer;
     }
 
-    public Event changeID(int id) {
-        return new Event(id, this.customerID, this.eventType, this.timeStamp, this.serverID);
+    public Server getServer() {
+        return this.server;
     }
 
-    public Event changeTimestamp(Time timeStamp) {
-        return new Event(this.id, this.customerID, this.eventType, timeStamp, this.serverID);
+    public Event setTime(Time time) {
+        return new Event(this.id, this.customer, this.eventType, time, this.server);
     }
 
-    public Event changeEventType(int eventType) {
-        return new Event(this.id, this.customerID, eventType, this.timeStamp, this.serverID);
+    public Event setType(int eventType) {
+        return new Event(this.id, this.customer, eventType, this.time, this.server);
     }
 
-    public Event changeServerID(int serverID) {
-        return new Event(this.id, this.customerID, this.eventType, this.timeStamp, serverID);
+    public Event setCustomer(Customer customer) {
+        return new Event(this.id, customer, this.eventType, this.time, this.server);
+    }
+
+    public Event setServer(Server server) {
+        return new Event(this.id, this.customer, this.eventType, this.time, server);
     }
 
     @Override
     public int compareTo(Event other) {
-        int output = this.getTimestamp().compareTo(other.getTimestamp());
+        int output = this.getTime().compareTo(other.getTime());
         if (output == 0)
             output = other.getEventType() - this.getEventType();
         if (output == 0)
@@ -75,19 +81,19 @@ public class Event implements Comparable<Event> {
 
         switch (eventType) {
         case ARRIVES:
-            output = String.format("%s %d arrives", timeStamp.toString(), customerID);
+            output = String.format("%s %d arrives", time.toString(), customer.getID());
             break;
         case WAITS:
-            output = String.format("%s %d waits to be served by %d", timeStamp.toString(), customerID, serverID);
+            output = String.format("%s %d waits to be served by %d", time.toString(), customer.getID(), server.getID());
             break;
         case SERVED:
-            output = String.format("%s %d served by %d", timeStamp.toString(), customerID, serverID);
+            output = String.format("%s %d served by %d", time.toString(), customer.getID(), server.getID());
             break;
         case LEAVES:
-            output = String.format("%s %d leaves", timeStamp.toString(), customerID);
+            output = String.format("%s %d leaves", time.toString(), customer.getID());
             break;
         case DONE:
-            output = String.format("%s %d done serving by %d", timeStamp.toString(), customerID, serverID);
+            output = String.format("%s %d done serving by %d", time.toString(), customer.getID(), server.getID());
             break;
         }
 

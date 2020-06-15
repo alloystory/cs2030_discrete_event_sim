@@ -5,19 +5,26 @@ import java.util.ArrayList;
 
 public class ServerManager {
     private List<Server> servers;
-    public static final int STARTING_ID = 1;
+    private int serverCount;
 
-    public ServerManager(int numberOfServers) {
+    public ServerManager() {
         this.servers = new ArrayList<>();
-        for (int i = STARTING_ID; i <= numberOfServers; i++) {
-            servers.add(new Server(i));
-        }
+        this.serverCount = 0;
+    }
+
+    public Server createServer() {
+        serverCount++;
+        return new Server(serverCount);
+    }
+
+    public void add(Server server) {
+        servers.add(server);
     }
 
     public Server findIdleServer() {
         Server output = null;
         for (Server server : servers) {
-            if (!server.isBusy() && !server.hasNextEvent()) {
+            if (!server.isBusy()) {
                 output = server;
                 break;
             }
@@ -28,15 +35,11 @@ public class ServerManager {
     public Server findAvailableServer() {
         Server output = null;
         for (Server server : servers) {
-            if (!server.hasNextEvent()) {
+            if (!server.isFull()) {
                 output = server;
                 break;
             }
         }
         return output;
-    }
-
-    public Server findServerByID(int serverID) {
-        return servers.get(serverID - STARTING_ID);
     }
 }
