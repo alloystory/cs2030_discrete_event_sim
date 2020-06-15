@@ -12,6 +12,14 @@ public class EventManager {
         _queue.offer(event);
     }
 
+    public boolean hasNextEvent() {
+        return !_queue.isEmpty();
+    }
+
+    public Event nextEvent() {
+        return _queue.poll();
+    }
+
     @Override
     public String toString() {
         StringBuilder output = new StringBuilder();

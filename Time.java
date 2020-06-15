@@ -4,13 +4,21 @@ public class Time implements Comparable<Time> {
         this._time = time;
     }
 
-    public double getTime() {
+    public double raw() {
         return _time;
+    }
+
+    public Time add(Time other) {
+        return new Time(this.raw() + other.raw());
+    }
+
+    public Time minus(Time other) {
+        return new Time(this.raw() - other.raw());
     }
 
     @Override
     public int compareTo(Time other) {
-        return Double.compare(this.getTime(), other.getTime());
+        return Double.compare(this.raw(), other.raw());
     }
 
     @Override

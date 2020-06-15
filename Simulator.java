@@ -8,6 +8,7 @@ public class Simulator {
 
     public void start() {
         EventManager eventManager = new EventManager();
+        ServerManager serverManager = new ServerManager(1);
         StatisticsManager statsManager = new StatisticsManager();
         int customerID = 1;
 
@@ -20,7 +21,19 @@ public class Simulator {
             eventManager.addEvent(event);
         }
 
-        System.out.println(eventManager);
+        while (eventManager.hasNextEvent()) {
+            Event event = eventManager.nextEvent();
+            System.out.println(event);
+            
+            Server server = serverManager.getServerFreeAt(event.getTime());
+            if (server != null) {
+                server.workOn(event);
+                System.out.println("Customer served; next service @ " + server.nextTime());
+            } else {
+                System.out.println("Customer leaves");
+            }
+        }
+
         System.out.println(statsManager);
     }
 }
